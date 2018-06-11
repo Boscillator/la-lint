@@ -1,3 +1,5 @@
+import re
+
 from lalint.matcher import *
 from lalint.tokenizer.tokens import *
 
@@ -56,4 +58,16 @@ def test_recursive_regex_match_math():
     assert matcher.match(document) == [
         Text("Hello"),
         Text("Human")
+    ]
+
+def test_regex_matcher_pattern():
+    document = Document([
+        Text("Hello")
+    ])
+
+    pattern = re.compile('.*')
+    matcher = RegexMatcher(pattern)
+
+    assert matcher.match(document) == [
+        Text("Hello")
     ]
