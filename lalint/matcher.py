@@ -32,7 +32,7 @@ class RegexMatcher(Matcher):
         self.pattern = pattern
 
     def token_matches(self, token):
-        return isinstance(token,Text) and re.match(self.pattern, token.value)
+        return isinstance(token,Text) and re.search(self.pattern, token.value)
 
 class CommandMatcher(Matcher):
 

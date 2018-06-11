@@ -148,3 +148,14 @@ def test_command_matcher_in_math():
     assert matcher.match(document) == [
         Command('foo')
     ]
+
+def test_regex_matcher_not_first():
+    document = Document([
+        Text('abc')
+    ])
+
+    matcher = RegexMatcher('b')
+
+    assert matcher.match(document) == [
+        Text('abc')
+    ]
