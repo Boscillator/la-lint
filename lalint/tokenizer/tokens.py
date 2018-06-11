@@ -17,6 +17,20 @@ class Document(object):
         else:
             return False
 
+    @property
+    def text(self):
+        res = ""
+        for token in self.body:
+            if isinstance(token, Text):
+                res += token.value
+            elif isinstance(token,Command):
+                for arg in token.args:
+                    res += arg.text
+            elif isinstance(token,Math):
+                res += token.body.text
+
+        return res
+
 class Text(object):
     """Plain text in LaTeX"""
 
