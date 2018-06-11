@@ -11,7 +11,7 @@ class Document(object):
         self.body = body
 
     def __repr__(self):
-        return f"<Document body='{self.body}'>"
+        return str(self.body)
 
     def __eq__(self, other):
         print("Document EQ")
@@ -22,6 +22,21 @@ class Document(object):
             return self.body == other
         else:
             return False
+
+class Text(object):
+    """Plain text in LaTeX"""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return self.value
+
+    def __eq__(self,other):
+        if type(other) == type(self):
+            return self.value == other.value
+        else:
+            return self.value == other
 
 class Command(object):
     r"""
@@ -114,6 +129,7 @@ displayedMath.setParseAction(lambda t :Math(t.body, inline=False))
 special_char = slash | lbrace | rbrace | lbracket | rbracket | dollar 
 word = ~special_char + Regex(r'[\s\S]')
 text = Combine(OneOrMore(word))
+text.setParseAction(lambda t: (Text(''.join(t.asList()))))
 
 document << Group(ZeroOrMore( command | text | inlineMath | displayedMath )).setResultsName('body')
 document.setParseAction(lambda t: Document(t.body.asList()))
