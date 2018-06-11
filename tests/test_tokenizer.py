@@ -163,12 +163,12 @@ def test_bracket_and_brace():
 
 def test_inline_math():
     assert tokenize(r"$1+1$") == [
-        InlineMath(["1+1"])
+        Math(["1+1"])
     ]
 
 def test_inline_math_with_command():
     assert tokenize(r"$\frac{a}{b} + 1$") == [
-        InlineMath([
+        Math([
             Command('frac', args= [['a'],['b']]),
             '+ 1'
         ])
@@ -176,7 +176,7 @@ def test_inline_math_with_command():
 
 def test_two_inline_maths():
     assert tokenize(r"$1$ and $2$") == [
-        InlineMath(['1']),
+        Math(['1']),
         'and ',
-        InlineMath(['2'])
+        Math(['2'])
     ]

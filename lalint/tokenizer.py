@@ -2,10 +2,35 @@ from collections import namedtuple
 from typing import List, Any
 from pyparsing import *
 
-Command = namedtuple('Command',['name','args'])
-Command.__new__.__defaults__ = ([],)
+# Command = namedtuple('Command',['name','args'])
+# Command.__new__.__defaults__ = ([],)
 
-InlineMath = namedtuple('InlineMath', ['body'])
+class Command(object):
+    r"""
+    A Latex Command (ie `\section`)
+
+    Attributes
+    ----------
+    name : str
+        The text that comes directly after the backslash
+    args : List[List[Union[str,Command,Math]]], optional
+        The list of args to the command. Each argument is a list of strings and Commands and Maths which represent the body of that command.
+    """
+
+    def __init__(self, name, args = []):
+        self.name = name
+        self.args = args
+
+    def __repr__(self):
+        return f"<Command name='{self.name}' args='{self.args}'>"
+    
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+
+        return self.name == other.name and self.args == other.args
+
+Math = namedtuple('Math', ['body'])
 
 slash = Literal("\\")
 lbrace = Literal("{")
@@ -39,7 +64,7 @@ command.setParseAction(handelCommand)
 
 dollar = Literal("$")
 inlineMath = dollar + document.setResultsName("body") + dollar
-inlineMath.setParseAction(lambda t: InlineMath(t.body.asList()))
+inlineMath.setParseAction(lambda t: Math(t.body.asList()))
 
 special_char = slash | lbrace | rbrace | lbracket | rbracket | dollar
 word = ~special_char + Regex(r'[\s\S]')
