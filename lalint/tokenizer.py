@@ -49,17 +49,28 @@ class Command(object):
         return self.name == other.name and self.args == other.args
 
 class Math(object):
+    """
+    Represents some math
 
-    def __init__(self, body):
+    Attributes
+    ----------
+    body : Document
+        The content inside the math
+    inline : bool
+        True if this is inline ($math$), False if this is displayed ($$math$$)
+    """
+
+    def __init__(self, body, inline = True):
         self.body = body
+        self.inline = inline
     
     def __repr__(self):
-        return f"<Math body='{self.body}'>"
+        return f"<Math {'inline' if self.inline else ''} body='{self.body}'>"
 
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        return self.body == other.body
+        return self.body == other.body and self.inline == other.inline
 
 slash = Literal("\\")
 lbrace = Literal("{")
@@ -92,14 +103,19 @@ command = slash + Word(alphanums).setResultsName('name') + Optional(arg_list).se
 command.setParseAction(handelCommand)
 
 dollar = Literal("$")
-inlineMath = dollar + document.setResultsName("body") + dollar
+doubleDollar = Literal("$$")
+
+inlineMath = ~doubleDollar + dollar + document.setResultsName("body") + dollar
 inlineMath.setParseAction(lambda t: Math(t.body))
 
-special_char = slash | lbrace | rbrace | lbracket | rbracket | dollar
+displayedMath = doubleDollar + document.setResultsName("body") + doubleDollar
+displayedMath.setParseAction(lambda t :Math(t.body, inline=False))
+
+special_char = slash | lbrace | rbrace | lbracket | rbracket | dollar 
 word = ~special_char + Regex(r'[\s\S]')
 text = Combine(OneOrMore(word))
 
-document << Group(ZeroOrMore( command | text | inlineMath)).setResultsName('body')
+document << Group(ZeroOrMore( command | text | inlineMath | displayedMath )).setResultsName('body')
 document.setParseAction(lambda t: Document(t.body.asList()))
 
 def tokenize(source_str):
