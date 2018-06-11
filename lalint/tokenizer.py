@@ -48,7 +48,18 @@ class Command(object):
 
         return self.name == other.name and self.args == other.args
 
-Math = namedtuple('Math', ['body'])
+class Math(object):
+
+    def __init__(self, body):
+        self.body = body
+    
+    def __repr__(self):
+        return f"<Math body='{self.body}'>"
+
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+        return self.body == other.body
 
 slash = Literal("\\")
 lbrace = Literal("{")
