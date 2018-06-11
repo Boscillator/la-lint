@@ -1,5 +1,5 @@
-from lalint.tokenizer import *
-
+from lalint.tokenizer import tokenize
+from lalint.tokenizer.tokens import *
 
 def test_single_command():
     assert tokenize(r'\mycommand') == [Command('mycommand')]
