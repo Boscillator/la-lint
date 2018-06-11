@@ -14,11 +14,9 @@ class Document(object):
         return str(self.body)
 
     def __eq__(self, other):
-        print("Document EQ")
         if type(other) == type(self):
             return self.body == other.body
         elif type(other) == list:
-            print("using list comparison")
             return self.body == other
         else:
             return False
