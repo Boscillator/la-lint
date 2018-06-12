@@ -3,12 +3,18 @@ from abc import ABC, abstractmethod
 
 
 class Token(ABC):
-    pass
+    def __init__(self):
+        self.parent = None
+
+    @abstractmethod
+    def attach_parents(self):
+        pass
 
 class Document(Token):
     """Repersents a selection of LaTeX"""
 
     def __init__(self, body):
+        super().__init__()
         self.body = body
 
     def __repr__(self):
@@ -43,10 +49,16 @@ class Document(Token):
                 self.body[i] = replacement
                 break
 
+    def attach_parents(self):
+        for child in self.body:
+            child.parent = self
+            child.attach_parents()
+
 class Text(Token):
     """Plain text in LaTeX"""
 
     def __init__(self, value):
+        super().__init__()
         self.value = value
 
     def __repr__(self):
@@ -57,6 +69,10 @@ class Text(Token):
             return self.value == other.value
         else:
             return self.value == other
+
+    def attach_parents(self):
+        #Nothing to do here, Text cannot have children
+        pass
 
 class Command(Token):
     r"""
@@ -71,6 +87,7 @@ class Command(Token):
     """
 
     def __init__(self, name, args = []):
+        super().__init__()
         self.name = name
         self.args = args
 
@@ -82,6 +99,11 @@ class Command(Token):
             return False
 
         return self.name == other.name and self.args == other.args
+
+    def attach_parents(self):
+        for arg in self.args:
+            arg.parent = self
+            arg.attach_parents()
 
 class Math(Token):
     """
@@ -96,6 +118,7 @@ class Math(Token):
     """
 
     def __init__(self, body, inline = True):
+        super().__init__()
         self.body = body
         self.inline = inline
     
@@ -106,3 +129,7 @@ class Math(Token):
         if type(self) != type(other):
             return False
         return self.body == other.body and self.inline == other.inline
+
+    def attach_parents(self):
+        self.body.parent = self
+        self.body.attach_parents()
