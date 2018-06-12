@@ -159,3 +159,14 @@ def test_regex_matcher_not_first():
     assert matcher.match(document) == [
         Text('abc')
     ]
+
+def test_root_matcher():
+    document = Document([
+        Text('foo')
+    ])
+
+    matcher = RootMatcher()
+
+    assert matcher.match(document) == Document([
+        Text('foo')
+    ])

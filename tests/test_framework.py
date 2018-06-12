@@ -23,13 +23,15 @@ def test_execute_rules_missing_required(example_rules):
         Text('oo')
     ])
 
-    with pytest.raises(ExpectedException):
+    with pytest.raises(AssertionError):
         example_rules.test(document)
 
-def test_execute_rules_has_disallowed(example_rules):
+def test_execute_rules_has_disallowed():
+    print("test")
+    example_rules = load_rules('tests.example_rules')
     document = Document([
         Text('abc')
     ])
 
-    with pytest.raises(DisallowedException):
+    with pytest.raises(AssertionError):
         example_rules.test(document)

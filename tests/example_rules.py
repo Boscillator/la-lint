@@ -1,9 +1,19 @@
-from lalint.matcher import RegexMatcher
+from lalint import Rule, CommandMatcher
 
-disallow = {
-    'the_letter_a': RegexMatcher('a')
-}
+@Rule()
+def dissallow_letter_a(document):
+    print(document)
+    assert 'a' not in document.text
 
-require = {
-    'the_letter_b': RegexMatcher('b')
-}
+@Rule()
+def require_letter_b(document):
+    assert 'b' in document.text
+
+class FooMustHaveCArgument(Rule):
+    matcher = CommandMatcher('foo')
+
+    def check(self, match):
+        assert match.args[0] == 'c'
+
+    def suggest(self, match):
+        return r"\foo{c}"

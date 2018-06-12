@@ -8,7 +8,7 @@ class Matcher(abc.ABC):
     def match(self, document):
         out = []
         for token in document.body:
-            if self.token_matches(token):
+            if self._token_matches(token):
                 out.append(token)
             
             if isinstance(token, Command):
@@ -20,7 +20,7 @@ class Matcher(abc.ABC):
         return out
 
     @abc.abstractmethod
-    def token_matches(self, token):
+    def _token_matches(self, token):
         """
         Returns true if the token should match this matcher.
         """
@@ -31,7 +31,7 @@ class RegexMatcher(Matcher):
     def __init__(self, pattern):
         self.pattern = pattern
 
-    def token_matches(self, token):
+    def _token_matches(self, token):
         return isinstance(token,Text) and re.search(self.pattern, token.value)
 
 class CommandMatcher(Matcher):
@@ -40,7 +40,7 @@ class CommandMatcher(Matcher):
         self.name = name
         self.args = args
 
-    def token_matches(self, token):
+    def _token_matches(self, token):
         if isinstance(token, Command):
             if token.name == self.name:
                 all_args_match = True
@@ -51,4 +51,13 @@ class CommandMatcher(Matcher):
                 if all_args_match:
                     return True
                 
+        return False
+
+class RootMatcher(Matcher):
+
+    def match(self, document):
+        return document
+
+    def _token_matches(self, token):
+        #This method does not make sense here, but python wants it.
         return False
