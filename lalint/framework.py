@@ -16,6 +16,9 @@ class Rules(object):
         print(f"Rules.__init__({self.rules})")
 
     def test(self, document):
+        """
+        Test all the rules
+        """
         for rule in self.rules:
             matches = rule.matcher.match(document)
             if isinstance(matches, Document):
