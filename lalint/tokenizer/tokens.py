@@ -1,6 +1,11 @@
 """Token classes for the tokenizer"""
+from abc import ABC, abstractmethod
 
-class Document(object):
+
+class Token(ABC):
+    pass
+
+class Document(Token):
     """Repersents a selection of LaTeX"""
 
     def __init__(self, body):
@@ -31,7 +36,14 @@ class Document(object):
 
         return res
 
-class Text(object):
+    def replace(self, original, replacement):
+        for i, child in enumerate(self.body):
+            #We need to compair by reference not by value to deal with duplicate values
+            if child is original:
+                self.body[i] = replacement
+                break
+
+class Text(Token):
     """Plain text in LaTeX"""
 
     def __init__(self, value):
@@ -46,7 +58,7 @@ class Text(object):
         else:
             return self.value == other
 
-class Command(object):
+class Command(Token):
     r"""
     A Latex Command (ie `\section`)
 
@@ -71,7 +83,7 @@ class Command(object):
 
         return self.name == other.name and self.args == other.args
 
-class Math(object):
+class Math(Token):
     """
     Represents some math
 

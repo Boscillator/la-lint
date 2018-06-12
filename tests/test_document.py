@@ -19,3 +19,15 @@ def test_text_recursive():
     ])
 
     assert document.text == "foobar"
+
+def test_replace():
+    text = Text('foo')
+    document = Document([
+        text
+    ])
+
+    document.replace(text, Text('bar'))
+
+    assert document == Document([
+        Text('bar')
+    ])
